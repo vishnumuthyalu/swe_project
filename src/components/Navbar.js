@@ -17,11 +17,11 @@ const Navbar = () => {
       <div className="nav-right">
         <div className="search-bar">
           <input type="text" placeholder="Search..." />
-          <button type="submit">🔍</button>
+          <button type="submit"><span role="img" aria-label="Search">🔍</span></button>
         </div>
         <div className="nav-icons">
-          <Link to="/profile" className="nav-icon">👤</Link>
-          <Link to="/cart" className="nav-icon">🛒</Link>
+          <Link to="/profile" className="nav-icon"><span role="img" aria-label="User Profile">👤</span></Link>
+          <Link to="/cart" className="nav-icon"><span role="img" aria-label="Shopping Cart">🛒</span></Link>
         </div>
       </div>
     </nav>
