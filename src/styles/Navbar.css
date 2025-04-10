@@ -17,11 +17,15 @@
 }
 
 .nav-logo {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #333;
   text-decoration: none;
   margin-right: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 40px;
+  width: auto;
 }
 
 .nav-links {
