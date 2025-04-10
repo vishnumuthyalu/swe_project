@@ -6,6 +6,7 @@
 
 .category-filter {
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .category-filter h2 {
@@ -17,6 +18,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  justify-content: center;
 }
 
 .category-btn {
