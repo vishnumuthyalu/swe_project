@@ -7,7 +7,7 @@ const ProductCard = ({ product }) => {
     <div className="product-card">
       <div className="product-image">
         {product.ImageURL ? (
-          <img src={product.ImageURL} alt={product.Name} className="actual-image" />
+          <img src={product.ImageURL} alt={product.Name} className="product-image" />
         ) : (
           <div className="placeholder-image">{product.Name.charAt(0)}</div>
         )}
