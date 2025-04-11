@@ -60,10 +60,11 @@ const ProductDetail = () => {
       
       <div className="product-detail-content">
         <div className="product-detail-image">
-          {/* Placeholder image */}
-          <div className="placeholder-detail-image">
-            {product.Name.charAt(0)}
-          </div>
+          {product.ImageURL ? (
+          <img src={product.ImageURL} alt={product.Name} className="actual-image" />
+            ) : (
+              <div className="placeholder-image">{product.Name.charAt(0)}</div>
+            )}
         </div>
         
         <div className="product-detail-info">

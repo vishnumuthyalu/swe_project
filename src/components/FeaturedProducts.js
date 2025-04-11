@@ -84,7 +84,11 @@ const FeaturedProducts = () => {
               <div className="product-image-container">
                 {/* Placeholder for future image */}
                 <div className="product-placeholder">
-                  {product.Name.charAt(0)}
+                {product.ImageURL ? (
+                  <img src={product.ImageURL} alt={product.Name} className="actual-image" />
+                ) : (
+                  <div className="placeholder-image">{product.Name.charAt(0)}</div>
+                )}
                 </div>
               </div>
               
