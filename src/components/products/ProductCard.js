@@ -6,8 +6,11 @@ const ProductCard = ({ product }) => {
   return (
     <div className="product-card">
       <div className="product-image">
-        {/* Placeholder image */}
-        <div className="placeholder-image">{product.Name.charAt(0)}</div>
+        {product.ImageURL ? (
+          <img src={product.ImageURL} alt={product.Name} className="actual-image" />
+        ) : (
+          <div className="placeholder-image">{product.Name.charAt(0)}</div>
+        )}
       </div>
       <div className="product-info">
         <h3 className="product-name">{product.Name}</h3>
