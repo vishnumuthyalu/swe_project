@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { CartContext } from '../context/CartContext';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
+  const { cartCount } = useContext(CartContext);
   return (
     <nav className="navbar">
       <div className="nav-left">
@@ -23,7 +25,10 @@ const Navbar = () => {
         </div>
         <div className="nav-icons">
           <Link to="/profile" className="nav-icon"><span role="img" aria-label="User Profile">👤</span></Link>
-          <Link to="/cart" className="nav-icon"><span role="img" aria-label="Shopping Cart">🛒</span></Link>
+          <Link to="/cart" className="nav-icon cart-icon">
+            <span role="img" aria-label="Shopping Cart">🛒</span>
+            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+          </Link>
         </div>
       </div>
     </nav>
