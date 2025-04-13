@@ -1,13 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import '../../styles/ProductDetail.css';
 import productData from '../../assets/product_list.csv';
+import { CartContext } from '../../context/CartContext';
 import Papa from 'papaparse';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useContext(CartContext);
+  const [addedToCart, setAddedToCart] = useState(false);
+  
+  // Handle add to cart action
+  const handleAddToCart = () => {
+    addToCart(product);
+    setAddedToCart(true);
+    
+    // Reset the "Added to cart" message after 2 seconds
+    setTimeout(() => {
+      setAddedToCart(false);
+    }, 2000);
+  };
   
   useEffect(() => {
     // Function to fetch and find specific product
@@ -61,10 +75,10 @@ const ProductDetail = () => {
       <div className="product-detail-content">
         <div className="product-detail-image">
           {product.ImageURL ? (
-          <img src={product.ImageURL} alt={product.Name} className="product-detail-image" />
-            ) : (
-              <div className="placeholder-image">{product.Name.charAt(0)}</div>
-            )}
+            <img src={product.ImageURL} alt={product.Name} className="product-detail-image" />
+          ) : (
+            <div className="placeholder-image">{product.Name.charAt(0)}</div>
+          )}
         </div>
         
         <div className="product-detail-info">
@@ -77,7 +91,12 @@ const ProductDetail = () => {
             <h2>Description</h2>
             <p>{product.Description}</p>
           </div>
-          <button className="add-to-cart-btn">Add to Cart</button>
+          <button 
+            className={`add-to-cart-btn ${addedToCart ? 'added' : ''}`} 
+            onClick={handleAddToCart}
+          >
+            {addedToCart ? 'Added to Cart!' : 'Add to Cart'}
+          </button>
         </div>
       </div>
     </div>

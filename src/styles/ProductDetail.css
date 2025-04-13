@@ -96,11 +96,15 @@
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .add-to-cart-btn:hover {
   background-color: #3a7bc8;
+}
+
+.add-to-cart-btn.added {
+  background-color: #4caf50;
 }
 
 .loading,
