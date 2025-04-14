@@ -82,14 +82,11 @@ const FeaturedProducts = () => {
               style={{ transform: `translateX(${(index - currentIndex) * 100}%)` }}
             >
               <div className="product-image-container">
-                {/* Placeholder for future image */}
-                <div className="product-placeholder">
                 {product.ImageURL ? (
-                  <img src={product.ImageURL} alt={product.Name} className="actual-image" />
+                  <img src={product.ImageURL} alt={product.Name} className="product-featured-image" />
                 ) : (
-                  <div className="placeholder-image">{product.Name.charAt(0)}</div>
+                  <div className="product-placeholder">{product.Name.charAt(0)}</div>
                 )}
-                </div>
               </div>
               
               <div className="product-content">

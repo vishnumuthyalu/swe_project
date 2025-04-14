@@ -46,6 +46,7 @@
   justify-content: center;
   align-items: center;
   background-color: #f5f5f5;
+  min-height: 350px;
 }
 
 .product-placeholder {
@@ -176,6 +177,14 @@
     width: 100%;
   }
   
+  .product-image-container {
+    min-height: 250px;
+  }
+  
+  .product-featured-image {
+    max-height: 200px;
+  }
+  
   .featured-slider {
     height: 700px;
   }
@@ -188,9 +197,10 @@
   color: #666;
 }
 
-.actual-image {
-  width: 100%;
+.product-featured-image {
+  max-width: 100%;
   height: auto;
-  object-fit: cover;
+  max-height: 300px;
+  object-fit: contain;
   border-radius: 8px;
 }

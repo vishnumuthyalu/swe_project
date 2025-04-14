@@ -73,11 +73,11 @@ const ProductDetail = () => {
       </div>
       
       <div className="product-detail-content">
-        <div className="product-detail-image">
+        <div className="product-detail-image-container">
           {product.ImageURL ? (
-            <img src={product.ImageURL} alt={product.Name} className="product-detail-image" />
+            <img src={product.ImageURL} alt={product.Name} className="product-image" />
           ) : (
-            <div className="placeholder-image">{product.Name.charAt(0)}</div>
+            <div className="placeholder-detail-image">{product.Name.charAt(0)}</div>
           )}
         </div>
         
