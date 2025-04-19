@@ -1,10 +1,26 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
+import { SearchContext } from '../context/SearchContext';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
   const { cartCount } = useContext(CartContext);
+  const { handleSearch } = useContext(SearchContext);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      handleSearch(searchTerm);
+      navigate('/search');
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
   return (
     <nav className="navbar">
       <div className="nav-left">
@@ -20,8 +36,15 @@ const Navbar = () => {
       </div>
       <div className="nav-right">
         <div className="search-bar">
-          <input type="text" placeholder="Search..." />
-          <button type="submit"><span role="img" aria-label="Search">🔍</span></button>
+          <form onSubmit={handleSearchSubmit}>
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              value={searchTerm}
+              onChange={handleInputChange}
+            />
+            <button type="submit"><span role="img" aria-label="Search">🔍</span></button>
+          </form>
         </div>
         <div className="nav-icons">
           <Link to="/profile" className="nav-icon"><span role="img" aria-label="User Profile">👤</span></Link>

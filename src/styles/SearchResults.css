@@ -1,0 +1,98 @@
+.search-results-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+.search-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.search-info p {
+  margin: 0;
+  color: #666;
+}
+
+.clear-search-btn {
+  background: none;
+  border: none;
+  color: #4a90e2;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.search-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  grid-auto-rows: 1fr;
+}
+
+.search-result-item {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.loading,
+.empty-search,
+.no-results {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.loading {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.empty-search p,
+.no-results p {
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.browse-products-link {
+  display: inline-block;
+  background-color: #4a90e2;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.browse-products-link:hover {
+  background-color: #3a7bc8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .search-results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .search-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .clear-search-btn {
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-results-grid {
+    grid-template-columns: 1fr;
+  }
+}
