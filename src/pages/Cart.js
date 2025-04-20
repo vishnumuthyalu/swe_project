@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import '../styles/Cart.css';
+import {loadStripe} from '@stripe/stripe-js';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, calculateTotal } = useContext(CartContext);
@@ -58,6 +59,31 @@ const Cart = () => {
       </div>
     );
   }
+
+  //payment integration
+  const makePayment = async ()=>{
+    const stripe = await loadStripe("pk_test_51REYGhIGSn9lquIYlo7cstx2dl5JpBqQJ79DcUGDQxLsq3mzNVKuXMbSAx3b0X23SpbQnuXAViJdZTPsH7Ek5eYY00Giwk2Huu");
+  
+    const body = {
+      products: cartItems
+    }
+    const headers={
+      "Constent-Type":"application/json"
+    }
+
+    const response = await fetch('${apiURL}/create-checkout-session',{
+      method:"POST",
+      headers:headers,
+      body:JSON.stringify(body)
+    })
+
+    const session = await response.json()
+
+    const result = stripe.redirectToCheckout({
+      sessionID:session.id
+    })
+  }
+
 
   return (
     <div className="page-container">
@@ -151,7 +177,9 @@ const Cart = () => {
             )}
           </div>
           
-          <button className="checkout-btn">Proceed to Checkout</button>
+          <button 
+          onClick={makePayment}
+          className="checkout-btn">Proceed to Checkout</button>
           <Link to="/products" className="continue-shopping">
             Continue Shopping
           </Link>
