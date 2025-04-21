@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import '../styles/Cart.css';
-import {loadStripe} from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, calculateTotal } = useContext(CartContext);
@@ -60,28 +60,44 @@ const Cart = () => {
     );
   }
 
-  //payment integration
   const makePayment = async ()=>{
+    try {
+
     const stripe = await loadStripe("pk_test_51REYGhIGSn9lquIYlo7cstx2dl5JpBqQJ79DcUGDQxLsq3mzNVKuXMbSAx3b0X23SpbQnuXAViJdZTPsH7Ek5eYY00Giwk2Huu");
   
     const body = {
       products: cartItems
     }
     const headers={
-      "Constent-Type":"application/json"
+      "Content-Type":"application/json"
     }
 
-    const response = await fetch('${apiURL}/create-checkout-session',{
-      method:"POST",
-      headers:headers,
-      body:JSON.stringify(body)
-    })
+
+
+    const response = await fetch('http://localhost:5000/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, // ← Required header
+      body: JSON.stringify({
+        items: cartItems.map(item => ({
+          name: item.Name, // Match property names exactly
+          price: item.Price,
+          quantity: item.quantity
+        }))
+      })
+    });
 
     const session = await response.json()
 
     const result = stripe.redirectToCheckout({
-      sessionID:session.id
+      sessionId:session.id
     })
+
+    } catch (error) {
+      console.error('Full error details:', error, Cart.text);
+    } finally {
+      //setPaymentLoading(false);
+    }
+
   }
 
 

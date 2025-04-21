@@ -1,0 +1,49 @@
+/* Container for the text and circle */
+.container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+}
+  
+/* Text above the circle */
+.payment-text {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+  
+/* Green circle with check mark */
+.x-circle {
+    width: 100px;
+    height: 100px;
+    background-color: #f01111; /* red color */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+/*this is for X-mark cancel*/
+.x-mark {
+    position: relative;
+    width: 40px;
+    height: 40px;
+  }
+  .x-mark span {
+    position: absolute;
+    left: 18px;
+    top: 0;
+    width: 5px;
+    height: 40px;
+    background: white;
+    border-radius: 2px;
+  }
+  
+  .x-mark span:first-child {
+    transform: rotate(45deg);
+  }
+  
+  .x-mark span:last-child {
+    transform: rotate(-45deg);
+  }

@@ -9,9 +9,14 @@ import Contact from './pages/Contact';
 import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import Search from './pages/Search';
+import Cancel from './pages/Cancel';
+import Success from './pages/Success';
+
 import { CartProvider } from './context/CartContext';
 import { SearchProvider } from './context/SearchContext';
 import './styles/global.css';
+
+
 
 
 function App() {
@@ -30,6 +35,8 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/search" element={<Search />} />
+              <Route path="/Cancel" element={<Cancel />} />
+              <Route path="/Success" element={<Success />} />
             </Routes>
           </div>
         </Router>
