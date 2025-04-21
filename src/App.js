@@ -11,30 +11,33 @@ import Cart from './pages/Cart';
 import Search from './pages/Search';
 import { CartProvider } from './context/CartContext';
 import { SearchProvider } from './context/SearchContext';
+import { AuthProvider } from './context/AuthContext';
 import './styles/global.css';
 
 
 function App() {
   return (
-    <CartProvider>
-      <SearchProvider>
-        <Router>
-          <div className="App">
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/search" element={<Search />} />
-            </Routes>
-          </div>
-        </Router>
-      </SearchProvider>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <SearchProvider>
+          <Router>
+            <div className="App">
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/search" element={<Search />} />
+              </Routes>
+            </div>
+          </Router>
+        </SearchProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

@@ -2,11 +2,13 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { SearchContext } from '../context/SearchContext';
+import { AuthContext } from '../context/AuthContext';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
   const { cartCount } = useContext(CartContext);
   const { handleSearch } = useContext(SearchContext);
+  const { currentUser } = useContext(AuthContext);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
@@ -47,7 +49,10 @@ const Navbar = () => {
           </form>
         </div>
         <div className="nav-icons">
-          <Link to="/profile" className="nav-icon"><span role="img" aria-label="User Profile">👤</span></Link>
+          <Link to="/profile" className="nav-icon">
+            <span role="img" aria-label="User Profile">👤</span>
+            {currentUser && <span className="auth-indicator"></span>}
+          </Link>
           <Link to="/cart" className="nav-icon cart-icon">
             <span role="img" aria-label="Shopping Cart">🛒</span>
             {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
