@@ -111,3 +111,14 @@
   align-items: center;
   justify-content: center;
 }
+
+.auth-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  border: 2px solid white;
+}

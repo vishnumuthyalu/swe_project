@@ -1,0 +1,37 @@
+.profile-content {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-content h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.profile-info {
+  margin-bottom: 2rem;
+}
+
+.profile-info p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+.profile-info strong {
+  font-weight: 500;
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+.profile-content .auth-button {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto;
+}

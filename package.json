@@ -5,6 +5,7 @@
   "dependencies": {
     "@stripe/stripe-js": "^7.1.0",
     "cra-template": "1.2.0",
+    "firebase": "^11.6.0",
     "papaparse": "^5.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

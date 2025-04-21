@@ -14,6 +14,7 @@ import Success from './pages/Success';
 
 import { CartProvider } from './context/CartContext';
 import { SearchProvider } from './context/SearchContext';
+import { AuthProvider } from './context/AuthContext';
 import './styles/global.css';
 
 
