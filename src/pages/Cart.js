@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import '../styles/Cart.css';
+import { loadStripe } from '@stripe/stripe-js';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, calculateTotal } = useContext(CartContext);
@@ -14,17 +15,39 @@ const Cart = () => {
   const TAX_RATE = 0.0825;
 
   // Calculate subtotal, tax, discount and total
+  //const subtotal = parseFloat(calculateTotal());
+  //const tax = subtotal * TAX_RATE;
+  //const discountAmount = subtotal * (discount / 100);
+  //const total = subtotal + tax - discountAmount;
+
   const subtotal = parseFloat(calculateTotal());
-  const tax = subtotal * TAX_RATE;
   const discountAmount = subtotal * (discount / 100);
-  const total = subtotal + tax - discountAmount;
+  const subtotalAfterDiscount = subtotal - discountAmount;
+  const tax = subtotalAfterDiscount * TAX_RATE;  // Tax now calculated on discounted amount
+  const total = subtotalAfterDiscount + tax;
 
   // Handle discount code application
   const applyDiscountCode = () => {
-    if (discountCode.toUpperCase() === 'FREE25') {
+    if (discountCode.toUpperCase() === 'FREE5') {
+      setDiscount(5);
+      setDiscountApplied(true);
+      setDiscountMessage('5% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE25') {
       setDiscount(25);
       setDiscountApplied(true);
       setDiscountMessage('25% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE50') {
+      setDiscount(50);
+      setDiscountApplied(true);
+      setDiscountMessage('50% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE75') {
+      setDiscount(75);
+      setDiscountApplied(true);
+      setDiscountMessage('75% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE100') {
+      setDiscount(100);
+      setDiscountApplied(true);
+      setDiscountMessage('100% discount applied successfully!');
     } else {
       setDiscount(0);
       setDiscountApplied(false);
@@ -58,6 +81,46 @@ const Cart = () => {
       </div>
     );
   }
+
+  const makePayment = async ()=>{
+    try {
+
+    const stripe = await loadStripe("pk_test_51REYGhIGSn9lquIYlo7cstx2dl5JpBqQJ79DcUGDQxLsq3mzNVKuXMbSAx3b0X23SpbQnuXAViJdZTPsH7Ek5eYY00Giwk2Huu");
+
+    const headers={
+      "Content-Type":"application/json"
+    }
+
+    const discountDecimal = discount / 100;
+
+    const response = await fetch('http://localhost:5000/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, // ← Required header
+      body: JSON.stringify({
+        items: cartItems.map(item => ({
+          name: item.Name, // Match property names exactly
+          price: item.Price,
+          quantity: item.quantity
+        })),
+        taxRate: TAX_RATE,
+        discountRate: discountDecimal
+      })
+    });
+
+    const session = await response.json()
+
+    const result = stripe.redirectToCheckout({
+      sessionId:session.id
+    })
+
+    } catch (error) {
+      console.error('Full error details (Caught in Cart.js):', error, Cart.text);
+    } finally {
+      //setPaymentLoading(false);
+    }
+
+  }
+
 
   return (
     <div className="page-container">
@@ -119,7 +182,7 @@ const Cart = () => {
           </div>
           {discountApplied && (
             <div className="summary-item discount">
-              <span>Discount (25%):</span>
+              <span>Discount (${discount}):</span>
               <span>-${discountAmount.toFixed(2)}</span>
             </div>
           )}
@@ -151,7 +214,9 @@ const Cart = () => {
             )}
           </div>
           
-          <button className="checkout-btn">Proceed to Checkout</button>
+          <button 
+          onClick={makePayment}
+          className="checkout-btn">Proceed to Checkout</button>
           <Link to="/products" className="continue-shopping">
             Continue Shopping
           </Link>
