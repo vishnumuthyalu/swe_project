@@ -15,10 +15,16 @@ const Cart = () => {
   const TAX_RATE = 0.0825;
 
   // Calculate subtotal, tax, discount and total
+  //const subtotal = parseFloat(calculateTotal());
+  //const tax = subtotal * TAX_RATE;
+  //const discountAmount = subtotal * (discount / 100);
+  //const total = subtotal + tax - discountAmount;
+
   const subtotal = parseFloat(calculateTotal());
-  const tax = subtotal * TAX_RATE;
   const discountAmount = subtotal * (discount / 100);
-  const total = subtotal + tax - discountAmount;
+  const subtotalAfterDiscount = subtotal - discountAmount;
+  const tax = subtotalAfterDiscount * TAX_RATE;  // Tax now calculated on discounted amount
+  const total = subtotalAfterDiscount + tax;
 
   // Handle discount code application
   const applyDiscountCode = () => {
@@ -64,15 +70,12 @@ const Cart = () => {
     try {
 
     const stripe = await loadStripe("pk_test_51REYGhIGSn9lquIYlo7cstx2dl5JpBqQJ79DcUGDQxLsq3mzNVKuXMbSAx3b0X23SpbQnuXAViJdZTPsH7Ek5eYY00Giwk2Huu");
-  
-    const body = {
-      products: cartItems
-    }
+
     const headers={
       "Content-Type":"application/json"
     }
 
-
+    const discountDecimal = discount / 100;
 
     const response = await fetch('http://localhost:5000/create-checkout-session', {
       method: 'POST',
@@ -82,7 +85,9 @@ const Cart = () => {
           name: item.Name, // Match property names exactly
           price: item.Price,
           quantity: item.quantity
-        }))
+        })),
+        taxRate: TAX_RATE,
+        discountRate: discountDecimal
       })
     });
 
@@ -93,7 +98,7 @@ const Cart = () => {
     })
 
     } catch (error) {
-      console.error('Full error details:', error, Cart.text);
+      console.error('Full error details (Caught in Cart.js):', error, Cart.text);
     } finally {
       //setPaymentLoading(false);
     }
