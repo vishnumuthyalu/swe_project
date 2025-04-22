@@ -28,10 +28,26 @@ const Cart = () => {
 
   // Handle discount code application
   const applyDiscountCode = () => {
-    if (discountCode.toUpperCase() === 'FREE25') {
+    if (discountCode.toUpperCase() === 'FREE5') {
+      setDiscount(5);
+      setDiscountApplied(true);
+      setDiscountMessage('5% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE25') {
       setDiscount(25);
       setDiscountApplied(true);
       setDiscountMessage('25% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE50') {
+      setDiscount(50);
+      setDiscountApplied(true);
+      setDiscountMessage('50% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE75') {
+      setDiscount(75);
+      setDiscountApplied(true);
+      setDiscountMessage('75% discount applied successfully!');
+    } else if (discountCode.toUpperCase() === 'FREE100') {
+      setDiscount(100);
+      setDiscountApplied(true);
+      setDiscountMessage('100% discount applied successfully!');
     } else {
       setDiscount(0);
       setDiscountApplied(false);
@@ -166,7 +182,7 @@ const Cart = () => {
           </div>
           {discountApplied && (
             <div className="summary-item discount">
-              <span>Discount (25%):</span>
+              <span>Discount (${discount}):</span>
               <span>-${discountAmount.toFixed(2)}</span>
             </div>
           )}
