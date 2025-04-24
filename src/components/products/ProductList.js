@@ -52,14 +52,19 @@ const ProductList = () => {
         
         Papa.parse(csvData, {
           header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
           complete: (results) => {
+            console.log('CSV parsing complete:', results);
             const productList = results.data;
-            setProducts(productList);
-            setFilteredProducts(productList);
-            setOriginalProducts(productList); // Store original order
+            // Filter out any empty rows
+            const validProducts = productList.filter(product => product.ProductID);
+            setProducts(validProducts);
+            setFilteredProducts(validProducts);
+            setOriginalProducts(validProducts); // Store original order
             
             // Extract unique categories
-            const uniqueCategories = ['all', ...new Set(productList.map(product => product.Category))];
+            const uniqueCategories = ['all', ...new Set(validProducts.map(product => product.Category))];
             setCategories(uniqueCategories);
           },
           error: (error) => {
