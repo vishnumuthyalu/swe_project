@@ -32,9 +32,12 @@ const ProductDetail = () => {
         
         Papa.parse(csvData, {
           header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
           complete: (results) => {
+            console.log('CSV parsing in ProductDetail:', results);
             const foundProduct = results.data.find(
-              (product) => product.ProductID === id
+              (product) => product.ProductID.toString() === id
             );
             
             if (foundProduct) {
@@ -87,6 +90,7 @@ const ProductDetail = () => {
             Category: <span>{product.Category}</span>
           </p>
           <p className="product-detail-price">${product.Price}</p>
+          <p className="product-detail-quantity">Stock Available: <span>{product.Quantity}</span></p>
           <div className="product-detail-description">
             <h2>Description</h2>
             <p>{product.Description}</p>

@@ -5,11 +5,24 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   
-  // Clear cart on page reload
+  // Initialize cart from localStorage on component mount
   useEffect(() => {
-    // Initialize the cart with an empty array
-    setCartItems([]);
+    const savedCart = localStorage.getItem('cartItems');
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        setCartItems(parsedCart);
+      } catch (error) {
+        console.error('Error parsing saved cart:', error);
+        localStorage.removeItem('cartItems');
+      }
+    }
   }, []);
+  
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
   
   // Add item to cart
   const addToCart = (product) => {
@@ -58,7 +71,6 @@ export const CartProvider = ({ children }) => {
   };
   
   return (
-    console.log(cartItems),
     <CartContext.Provider
       value={{
         cartItems,
@@ -66,6 +78,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         calculateTotal,
+        clearCart: () => setCartItems([]),
         cartCount: cartItems.reduce((count, item) => count + item.quantity, 0)
       }}
     >
