@@ -3,6 +3,8 @@ const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
 const { updateProductQuantities } = require('./csvUtils');
+const { updateProduct, addProduct } = require('./productUtils');
+const { readDiscountCodes, addDiscountCode, toggleDiscountCodeStatus, deleteDiscountCode, findDiscountCode } = require('./discountUtils');
 
 const app = express();
 app.use(cors({ origin: process.env.CLIENT_URL }));
@@ -49,6 +51,58 @@ app.post('/test-update-quantity', async (req, res) => {
     return res.json({ success: true, message: 'Product quantity updated successfully' });
   } catch (error) {
     console.error('Error in test update:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to update a product
+app.post('/update-product', async (req, res) => {
+  try {
+    console.log('Received update product request:', req.body);
+    const { productId, updatedProduct } = req.body;
+    
+    if (!productId || !updatedProduct) {
+      console.error('Invalid request data', req.body);
+      return res.status(400).json({ error: 'Product ID and updated product data are required' });
+    }
+    
+    const updateSuccess = updateProduct(productId, updatedProduct);
+    
+    if (updateSuccess) {
+      console.log('Successfully updated product');
+      res.json({ success: true, message: 'Product updated successfully' });
+    } else {
+      console.error('Failed to update product');
+      res.status(500).json({ success: false, message: 'Failed to update product' });
+    }
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to add a new product
+app.post('/add-product', async (req, res) => {
+  try {
+    console.log('Received add product request:', req.body);
+    const { newProduct } = req.body;
+    
+    if (!newProduct) {
+      console.error('Invalid request data', req.body);
+      return res.status(400).json({ error: 'New product data is required' });
+    }
+    
+    const addSuccess = addProduct(newProduct);
+    
+    if (addSuccess) {
+      console.log('Successfully added new product');
+      res.json({ success: true, message: 'Product added successfully' });
+    } else {
+      console.error('Failed to add product');
+      res.status(500).json({ success: false, message: 'Failed to add product' });
+    }
+  } catch (error) {
+    console.error('Error adding product:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -143,6 +197,154 @@ app.post('/testPost', (req, res) => {
     res.sendStatus(200);
   });
 
+// Endpoint to get all discount codes
+app.get('/discount-codes', async (req, res) => {
+  try {
+    console.log('Get discount codes request received');
+    // Initialize CSV file if needed
+    require('./discountUtils').initializeCsvFile();
+    
+    const discountCodes = readDiscountCodes();
+    console.log('Returning discount codes:', discountCodes);
+    res.json({ success: true, discountCodes });
+  } catch (error) {
+    console.error('Error getting discount codes:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to add a new discount code
+app.post('/discount-codes', async (req, res) => {
+  try {
+    console.log('Add discount code request received:', req.body);
+    const { code, discount } = req.body;
+    
+    if (!code || !discount) {
+      console.error('Invalid request: missing code or discount', req.body);
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Code and discount percentage are required' 
+      });
+    }
+    
+    // Create a new discount code object
+    const newDiscountCode = {
+      id: Date.now().toString(),
+      code: code.toUpperCase(),
+      discount: parseInt(discount, 10),
+      isActive: true
+    };
+    
+    console.log('Adding new discount code:', newDiscountCode);
+    const success = addDiscountCode(newDiscountCode);
+    
+    if (success) {
+      console.log('Successfully added discount code');
+      const allCodes = readDiscountCodes();
+      console.log('Returning all codes:', allCodes.length);
+      return res.json({ success: true, discountCodes: allCodes });
+    } else {
+      console.error('Failed to add discount code');
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to add discount code' 
+      });
+    }
+  } catch (error) {
+    console.error('Error adding discount code:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to toggle discount code status
+app.patch('/discount-codes/:id', async (req, res) => {
+  try {
+    console.log(`Toggle discount code status request received for ID: ${req.params.id}`);
+    const { id } = req.params;
+    
+    const success = toggleDiscountCodeStatus(id);
+    
+    if (success) {
+      console.log('Successfully toggled discount code status');
+      const allCodes = readDiscountCodes();
+      console.log('Returning updated discount codes');
+      return res.json({ success: true, discountCodes: allCodes });
+    } else {
+      console.error('Failed to toggle discount code status');
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to toggle discount code status' 
+      });
+    }
+  } catch (error) {
+    console.error('Error toggling discount code status:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to delete a discount code
+app.delete('/discount-codes/:id', async (req, res) => {
+  try {
+    console.log(`Delete discount code request received for ID: ${req.params.id}`);
+    const { id } = req.params;
+    
+    const success = deleteDiscountCode(id);
+    
+    if (success) {
+      console.log('Successfully deleted discount code');
+      const allCodes = readDiscountCodes();
+      console.log('Returning updated discount codes');
+      return res.json({ success: true, discountCodes: allCodes });
+    } else {
+      console.error('Failed to delete discount code');
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to delete discount code' 
+      });
+    }
+  } catch (error) {
+    console.error('Error deleting discount code:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to verify a discount code
+app.post('/verify-discount', async (req, res) => {
+  try {
+    console.log('Verify discount code request received:', req.body);
+    const { code } = req.body;
+    
+    if (!code) {
+      console.error('Invalid request: missing discount code');
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Discount code is required' 
+      });
+    }
+    
+    const discountCode = findDiscountCode(code);
+    
+    if (discountCode) {
+      console.log(`Valid discount code found: ${discountCode.code}, ${discountCode.discount}%`);
+      return res.json({ 
+        success: true, 
+        valid: true, 
+        discount: discountCode.discount 
+      });
+    } else {
+      console.log(`Invalid discount code: ${code}`);
+      return res.json({ 
+        success: true, 
+        valid: false, 
+        discount: 0 
+      });
+    }
+  } catch (error) {
+    console.error('Error verifying discount code:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Endpoint to update product quantities after successful checkout
 app.post('/update-quantities', async (req, res) => {
   try {
@@ -173,6 +375,136 @@ app.post('/update-quantities', async (req, res) => {
   } catch (error) {
     console.error('Error updating quantities:', error);
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to get all sale items
+app.get('/sale-items', async (req, res) => {
+  try {
+    console.log('Get sale items request received');
+    
+    const saleItems = readSaleItems();
+    console.log('Returning sale items:', saleItems.length);
+    res.json({ success: true, saleItems });
+  } catch (error) {
+    console.error('Error getting sale items:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to add a new sale item
+app.post('/sale-items', async (req, res) => {
+  try {
+    console.log('Add sale item request received:', req.body);
+    const { productId, productName, originalPrice, discountPercent, salePrice, isActive } = req.body;
+    
+    if (!productId || !originalPrice || !discountPercent || !salePrice) {
+      console.error('Invalid request: missing required fields', req.body);
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Product ID, prices, and discount percentage are required' 
+      });
+    }
+    
+    // Create a new sale item object
+    const newSaleItem = {
+      id: Date.now().toString(),
+      productId,
+      productName,
+      originalPrice: parseFloat(originalPrice),
+      discountPercent: parseInt(discountPercent, 10),
+      salePrice: parseFloat(salePrice).toFixed(2),
+      isActive: isActive !== false // Default to true if not specified
+    };
+    
+    console.log('Adding new sale item:', newSaleItem);
+    const success = addSaleItem(newSaleItem);
+    
+    if (success) {
+      console.log('Successfully added sale item');
+      const allSaleItems = readSaleItems();
+      console.log('Returning all sale items:', allSaleItems.length);
+      return res.json({ success: true, saleItems: allSaleItems, newSaleItem });
+    } else {
+      console.error('Failed to add sale item');
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to add sale item' 
+      });
+    }
+  } catch (error) {
+    console.error('Error adding sale item:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to toggle sale item status
+app.patch('/sale-items/:id', async (req, res) => {
+  try {
+    console.log(`Toggle sale item status request received for ID: ${req.params.id}`);
+    const { id } = req.params;
+    const { currentSaleItems } = req.body;
+    
+    if (!currentSaleItems || !Array.isArray(currentSaleItems)) {
+      console.error('Invalid request: missing current sale items');
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Current sale items are required' 
+      });
+    }
+    
+    const success = toggleSaleStatus(id, currentSaleItems);
+    
+    if (success) {
+      console.log('Successfully toggled sale item status');
+      const updatedSaleItems = readSaleItems();
+      console.log('Returning updated sale items');
+      return res.json({ success: true, saleItems: updatedSaleItems });
+    } else {
+      console.error('Failed to toggle sale item status');
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to toggle sale item status' 
+      });
+    }
+  } catch (error) {
+    console.error('Error toggling sale item status:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Endpoint to delete a sale item
+app.delete('/sale-items/:id', async (req, res) => {
+  try {
+    console.log(`Delete sale item request received for ID: ${req.params.id}`);
+    const { id } = req.params;
+    const { productId } = req.body;
+    
+    if (!productId) {
+      console.error('Invalid request: missing product ID');
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Product ID is required' 
+      });
+    }
+    
+    const success = removeSaleItem(productId);
+    
+    if (success) {
+      console.log('Successfully deleted sale item');
+      const updatedSaleItems = readSaleItems();
+      console.log('Returning updated sale items');
+      return res.json({ success: true, saleItems: updatedSaleItems });
+    } else {
+      console.error('Failed to delete sale item');
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to delete sale item' 
+      });
+    }
+  } catch (error) {
+    console.error('Error deleting sale item:', error);
+    return res.status(500).json({ success: false, error: error.message });
   }
 });
 
