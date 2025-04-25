@@ -3,12 +3,13 @@ import { AuthContext } from '../context/AuthContext';
 import Login from '../components/auth/Login';
 import Register from '../components/auth/Register';
 import ResetPassword from '../components/auth/ResetPassword';
+import AdminDashboard from '../components/admin/AdminDashboard';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Profile.css';
 
 const Profile = () => {
   const [authView, setAuthView] = useState('login'); // 'login', 'register', or 'reset'
-  const { currentUser, logout } = useContext(AuthContext);
+  const { currentUser, isAdmin, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -23,18 +24,23 @@ const Profile = () => {
   if (currentUser) {
     return (
       <div className="page-container">
-        <h1>USER PROFILE</h1>
-        <div className="profile-content">
-          <h2>Welcome, {currentUser.email}</h2>
-          <div className="profile-info">
-            <p><strong>Email:</strong> {currentUser.email}</p>
-            <p><strong>Account created:</strong> {currentUser.metadata.creationTime}</p>
-            <p><strong>Last sign in:</strong> {currentUser.metadata.lastSignInTime}</p>
+        <h1>{isAdmin ? 'ADMIN DASHBOARD' : 'USER PROFILE'}</h1>
+        
+        {isAdmin ? (
+          <AdminDashboard />
+        ) : (
+          <div className="profile-content">
+            <h2>Welcome, {currentUser.email}</h2>
+            <div className="profile-info">
+              <p><strong>Email:</strong> {currentUser.email}</p>
+              <p><strong>Account created:</strong> {currentUser.metadata.creationTime}</p>
+              <p><strong>Last sign in:</strong> {currentUser.metadata.lastSignInTime}</p>
+            </div>
+            <button onClick={handleLogout} className="auth-button">
+              Log Out
+            </button>
           </div>
-          <button onClick={handleLogout} className="auth-button">
-            Log Out
-          </button>
-        </div>
+        )}
       </div>
     );
   }

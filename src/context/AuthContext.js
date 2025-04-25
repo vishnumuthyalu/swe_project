@@ -12,6 +12,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Sign up function
   const signup = (email, password) => {
@@ -31,6 +32,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      
+      // Check if user is admin
+      if (user && user.email === 'admin@admin.com') {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+      
       setLoading(false);
     });
 
@@ -39,6 +48,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
+    isAdmin,
     signup,
     login,
     logout
